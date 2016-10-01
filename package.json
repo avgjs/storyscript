@@ -1,0 +1,23 @@
+{
+  "name": "avg-storyscript",
+  "version": "0.0.1",
+  "description": "Build-in Story Script System for AVG.js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "AVG",
+    "Game",
+    "AVG.js",
+    "script"
+  ],
+  "author": {
+    "name": "Icemic Jia",
+    "email": "bingfeng.web@gmail.com"
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "ohm-js": "^0.12.3"
+  }
+}
