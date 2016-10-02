@@ -73,7 +73,7 @@ BKS {
     = "#if" Exp
 
   LET
-    = "#let" variable "=" Exp  -- assign
+    = ("#let" | "#") variable "=" Exp  -- assign
     | "#let" variable              -- nonAssign
 
   END
@@ -107,7 +107,7 @@ BKS {
   = MathExp mathOperator MathExp  -- math
   | PriExp
 
-  mathOperator = "+" | "-" | "*" | "/" | "^"
+  mathOperator = "+" | "-" | "*" | "/" | "^" | "%"
 
   PriExp
   = "(" Exp ")"  -- paren
