@@ -22,6 +22,7 @@ BKS {
     = IF LogicBlock* (ELSEIF LogicBlock*)* (ELSE LogicBlock*)? END  -- IF
     | WHILE LogicBlock* END  -- WHILE
     | FOREACH LogicBlock* END  -- FOREACH
+    | LET                      -- LET
     | StoryLine                       -- Story
 
   StoryLine
@@ -66,14 +67,14 @@ BKS {
   hexdigit
     = "a".."f" | "A".."F" | digit
 
-  variable = (letter | number | "_")+
+  variable = ~number (letter | number | "_")+
 
   IF
     = "#if" Exp
 
-  VAR
-    = "#var" variable "=" MathExp  -- assign
-        | "#var" variable            -- nonAssign
+  LET
+    = "#let" variable "=" Exp  -- assign
+    | "#let" variable              -- nonAssign
 
   END
     = "#end"

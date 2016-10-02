@@ -95,5 +95,21 @@ module.exports = {
       child: childVar.parse(),
       children: childrenVar.parse()
     }
+  },
+  LET_assign(head, variable, operator, Exp) {
+    return {
+      type: 'logic',
+      name: 'let',
+      left: variable.parse(),
+      right: Exp.parse()
+    }
+  },
+  LET_nonAssign(head, variable) {
+    return {
+      type: 'logic',
+      name: 'let',
+      left: variable.parse(),
+      right: null
+    }
   }
 }
