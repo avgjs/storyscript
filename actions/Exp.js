@@ -15,7 +15,7 @@
  */
 
 module.exports = {
-  Exp(n) {
+  Scripts(n) {
     var ret = [];
     for (var child of n.children) {
       ret.push(child.parse())

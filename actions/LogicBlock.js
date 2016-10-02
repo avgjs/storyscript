@@ -73,7 +73,8 @@ module.exports = {
     return {
       type: 'logic',
       name: 'foreach',
-      condition: condition,
+      child: condition.child,
+      children: condition.children,
       block: block
     }
   },

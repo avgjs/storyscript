@@ -15,10 +15,11 @@
  */
 
 var base = require('./base');
+var arithmetic = require('./arithmetic');
 var keyvalue = require('./keyvalue');
 var story = require('./story');
 var Expression = require('./Expression');
 var LogicBlock = require('./LogicBlock');
 var Exp = require('./Exp');
 
-module.exports = Object.assign({}, base, keyvalue, story, Expression, LogicBlock, Exp);
+module.exports = Object.assign({}, base, arithmetic, keyvalue, story, Expression, LogicBlock, Exp);

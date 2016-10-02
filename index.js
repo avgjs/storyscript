@@ -24,7 +24,7 @@ var userInput = `
 [text set speed=50]
 #elseif y <= 0x11
 [bg file="kodoyuri/data.xp3/bgimage/h01.png" trans]
-#elseif y == x
+#elseif y == (x + (1 - 1) * -2) / +4
 [bg file="kodoyuri/data.xp3/bgimage/white.png" trans]
 #else
 #end
@@ -40,5 +40,5 @@ var userInput = `
 
 var time = Date.now();
 var result = parser.parse(userInput);
-console.log(Date.now() - time);
-// console.log(prettyjson.render(result));
+// console.log(Date.now() - time);
+console.log(prettyjson.render(result));

@@ -15,64 +15,65 @@
  */
 
 BKS {
-  Exp
+  Scripts
     = LogicBlock*
 
   LogicBlock
-    = IF LogicBlock* (ELSEIF LogicBlock*)* (ELSE LogicBlock*)? END  --IF
-    | WHILE LogicBlock* END  --WHILE
-    | FOREACH LogicBlock* END  --FOREACH
-    | StoryLine                       --Story
+    = IF LogicBlock* (ELSEIF LogicBlock*)* (ELSE LogicBlock*)? END  -- IF
+    | WHILE LogicBlock* END  -- WHILE
+    | FOREACH LogicBlock* END  -- FOREACH
+    | StoryLine                       -- Story
 
   StoryLine
-    = "@" command content    --formatA
-      | "[" command content "]"    --formatB
+    = "@" command content    -- formatA
+      | "[" command content "]"    -- formatB
 
   command = key
 
-  content = keyValue " " content --mul
-  | keyValue                --base
+  content = keyValue " " content -- mul
+  | keyValue                -- base
 
-  keyValue = key "=" value  --param
-    | key        --flag
+  keyValue = key "=" value  -- param
+    | key        -- flag
 
   key = (letter | number | "_")+
 
   value = string | number | boolean
 
-  string = "\"" doubleQuoteStringContent* "\"" --doubleQuote
-      | "\'" singleQuoteStringContent* "\'" --singleQuote
+  string = "\"" doubleQuoteStringContent* "\"" -- doubleQuote
+      | "\'" singleQuoteStringContent* "\'" -- singleQuote
 
-  singleQuoteStringContent = ~("\'" | "\\" ) any  --nonEscaped
-      | "\\" escapeCharacter                 --escaped
+// ~("\'" | "\\" ) any  -- nonEscaped
 
-  doubleQuoteStringContent = ~("\"" | "\\" ) any  --nonEscaped
-      | "\\" escapeCharacter                 --escaped
+  singleQuoteStringContent = ~("\'") any  -- nonEscaped
+      | "\\" escapeCharacter                 -- escaped
+
+  doubleQuoteStringContent = ~("\"") any  -- nonEscaped
+      | "\\" escapeCharacter                 -- escaped
 
   singleEscapeCharacter = "'"|"\""|"\\"|"b"|"f"|"n"|"r"|"t"|"v"
   escapeCharacter = singleEscapeCharacter | "x" | "u"
 
   quote = "\"" | "\'"
 
-  boolean = "true" | "false"
+  boolean = ("true" | "false") ~variable
 
   number  (a number)
-    = digit* "." digit+  -- fract
-    | "0x" hexdigit+        -- hex
-    | digit+             -- whole
+    = digit* "." digit+  --  fract
+    | "0x" hexdigit+        --  hex
+    | digit+             --  whole
 
   hexdigit
     = "a".."f" | "A".."F" | digit
 
-  // Statement = IF | VAR | END | ELSE | WHILE
+  variable = (letter | number | "_")+
 
   IF
-    = "#if" ExpressionBlock
+    = "#if" Exp
 
   VAR
-    = "#var" variable "=" value  --assign1
-        | "#var" variable "=" variable  --assign2
-        | "#var" variable            --nonAssign
+    = "#var" variable "=" MathExp  -- assign
+        | "#var" variable            -- nonAssign
 
   END
     = "#end"
@@ -81,30 +82,37 @@ BKS {
     = "#else"
 
   ELSEIF
-    = "#elseif" ExpressionBlock
+    = "#elseif" Exp
 
   WHILE
-    = "#while" ExpressionBlock
+    = "#while" Exp
 
   FOREACH
     = "#foreach" variable "in" variable
 
-  ExpressionBlock
-    = BracketExpression booleanOperator ExpressionBlock  --multi
-    | BracketExpression                                  --single
-
-  BracketExpression
-    = "(" ExpressionBlock ")"   --bracket
-    | Expression                --nonBracket
+  Exp
+    = JudgeExp booleanOperator Exp  -- bool
+    | JudgeExp
 
   booleanOperator = "&&" | "||"
 
-  Expression
-    = variable operator value     --v2V
-    | variable operator variable  --v2v
-    | variable                    --v
+  JudgeExp
+    = MathExp judgeOperator MathExp     -- judge
+    | MathExp
 
-  variable = (letter | number | "_")+
-  operator = "+" | "-" | "*" | "/" | "==" | ">=" | "<=" | ">" | "<"
+  judgeOperator = "==" | ">=" | "<=" | ">" | "<"
+
+  MathExp
+  = MathExp mathOperator MathExp  -- math
+  | PriExp
+
+  mathOperator = "+" | "-" | "*" | "/" | "^"
+
+  PriExp
+  = "(" Exp ")"  -- paren
+  | "+" PriExp   -- pos
+  | "-" PriExp   -- neg
+  | value
+  | variable
 
 }

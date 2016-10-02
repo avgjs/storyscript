@@ -15,65 +15,24 @@
  */
 
 module.exports = {
-  ExpressionBlock_multi(BracketExpression, booleanOperator, ExpressionBlock) {
-    var leftValue = BracketExpression.parse();
-    var operator = booleanOperator.parse();
-    var rightValue = ExpressionBlock.parse();
+  Exp_bool(JudgeExp, booleanOperator, Exp) {
     return {
-      left: {
-        type: 'expression',
-        value: leftValue
-      },
-      operator: operator,
-      right: {
-        type: 'expression',
-        value: rightValue
+      type: 'expression',
+      value: {
+        left: JudgeExp.parse(),
+        operator: booleanOperator.parse(),
+        right: Exp.parse()
       }
     }
   },
-  ExpressionBlock_single(BracketExpression) {
-    return BracketExpression.parse();
-  },
-  BracketExpression_bracket(head, ExpressionBlock, foot) {
-    return ExpressionBlock.parse();
-  },
-  BracketExpression_nonBracket(Expression) {
-    return Expression.parse();
-  },
-  Expression_v2V(variable, operator, value) {
+  JudgeExp_judge(left, operator, right) {
     return {
-      left: {
-        type: 'variable',
-        value: variable.parse()
-      },
-      operator: operator.parse(),
-      right: {
-        type: 'value',
-        value: value.parse()
+      type: 'expression',
+      value: {
+        left: left.parse(),
+        operator: operator.parse(),
+        right: right.parse()
       }
-    }
-  },
-  Expression_v2v(variable, operator, variable2) {
-    return {
-      left: {
-        type: 'variable',
-        value: variable.parse()
-      },
-      operator: operator.parse(),
-      right: {
-        type: 'variable',
-        value: variable2.parse()
-      }
-    }
-  },
-  Expression_v(variable) {
-    return {
-      left: {
-        type: 'variable',
-        value: variable.parse()
-      },
-      operator: null,
-      right: null
     }
   }
 }

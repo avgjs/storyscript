@@ -16,14 +16,17 @@
 
 module.exports = {
   value(n) {
-    var ret;
+    var value;
     switch (n.ctorName) {
-      case 'string': ret = n.parse(); break;
-      case 'number': ret = Number(n.parse()); break;
-      case 'boolean': ret = (n.parse().toLowerCase() === 'true'); break;
-      default: ret = undefined
+      case 'string': value = n.parse(); break;
+      case 'number': value = Number(n.parse()); break;
+      case 'boolean': value = (n.parse().toLowerCase() === 'true'); break;
+      default: value = undefined
     }
-    return ret;
+    return {
+      type: 'value',
+      value: value
+    };
   },
   number_hex(head, octdigit) {
     return '0x' + octdigit.parse();
