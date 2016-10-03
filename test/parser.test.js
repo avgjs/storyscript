@@ -184,22 +184,26 @@ describe('Parser', () => {
         { type: 'content', command: 'name', flags: ['flagA'], params: {} },
         {
           type: 'logic', name: 'let',
+          explicit: true,
           left: { type: 'variable', prefix: null, value: 'variable' },
           right: { type: 'value', value: '123' },
         },
         {
           type: 'logic', name: 'let',
+          explicit: true,
           left: { type: 'variable', prefix: null, value: 'variable2' },
           right: { type: 'variable', prefix: null, value: 'variable' },
         },
         {
           type: 'logic', name: 'let',
+          explicit: true,
           left: { type: 'variable', prefix: null, value: 'variable3' },
           right: null,
         },
         { type: 'content', command: 'name', flags: ['flagB'], params: {} },
         {
           type: 'logic', name: 'let',
+          explicit: false,
           left: { type: 'variable', prefix: null, value: 'variable4' },
           right: { type: 'value', value: true },
         }

@@ -97,9 +97,11 @@ module.exports = {
     }
   },
   LET_assign(head, variable, operator, Exp) {
+    var explicit = head.parse().length > 1;
     return {
       type: 'logic',
       name: 'let',
+      explicit: explicit,
       left: variable.parse(),
       right: Exp.parse()
     }
@@ -108,6 +110,7 @@ module.exports = {
     return {
       type: 'logic',
       name: 'let',
+      explicit: true,
       left: variable.parse(),
       right: null
     }
