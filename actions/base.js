@@ -21,7 +21,7 @@ module.exports = {
       case 'string': value = n.parse(); break;
       case 'number': value = Number(n.parse()); break;
       case 'boolean': value = (n.parse().toLowerCase() === 'true'); break;
-      default: value = undefined
+      default: value = null;
     }
     return {
       type: 'value',

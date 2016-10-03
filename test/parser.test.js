@@ -70,6 +70,18 @@ describe('Parser', () => {
         }
       }]);
     });
+    it('parse parameter value of null', () => {
+      expect(parse('@name param=null param2=false'))
+      .to.eql([{
+        type: 'content',
+        command: 'name',
+        flags: [],
+        params: {
+          param: { type: 'value', value: null},
+          param2: { type: 'value', value: false}
+        }
+      }]);
+    });
 
     it('throw when wrong syntex', () => {
       expect(() => parse('@name param1=xxx')).to.throw(/Line 1, col 14/);

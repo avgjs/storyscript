@@ -39,7 +39,7 @@ BKS {
 
   key = (letter | number | "_")+
 
-  value = string | number | boolean
+  value = string | number | boolean | "null"
 
   string = "\"" doubleQuoteStringContent* "\"" -- doubleQuote
       | "\'" singleQuoteStringContent* "\'" -- singleQuote
