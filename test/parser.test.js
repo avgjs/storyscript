@@ -172,6 +172,39 @@ describe('Parser', () => {
         { type: 'content', command: 'name', flags: ['flagC'], params: {} }
       ])
     });
+    it('parse LET', () => {
+      expect(parse(`
+        @name flagA
+        #let variable = "123"
+        #let variable2 = variable
+        #let variable3
+        @name flagB
+        #variable4 = true
+      `)).to.eql([
+        { type: 'content', command: 'name', flags: ['flagA'], params: {} },
+        {
+          type: 'logic', name: 'let',
+          left: { type: 'variable', value: 'variable' },
+          right: { type: 'value', value: '123' },
+        },
+        {
+          type: 'logic', name: 'let',
+          left: { type: 'variable', value: 'variable2' },
+          right: { type: 'variable', value: 'variable' },
+        },
+        {
+          type: 'logic', name: 'let',
+          left: { type: 'variable', value: 'variable3' },
+          right: null,
+        },
+        { type: 'content', command: 'name', flags: ['flagB'], params: {} },
+        {
+          type: 'logic', name: 'let',
+          left: { type: 'variable', value: 'variable4' },
+          right: { type: 'value', value: true },
+        }
+      ])
+    });
     it('parse complex logic expression', () => {
       expect(parse(`
         #while x > 1 && ((x == 'test' || y >= 30) && a) || (b + 2) * -10
