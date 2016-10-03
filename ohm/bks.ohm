@@ -67,7 +67,7 @@ BKS {
   hexdigit
     = "a".."f" | "A".."F" | digit
 
-  variable = ~number (letter | number | "_")+
+  variable = ~number ("$" | "%")? (letter | number | "_")+
 
   IF
     = "#if" Exp

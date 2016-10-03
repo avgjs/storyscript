@@ -117,9 +117,9 @@ describe('Parser', () => {
         {
           type: 'logic', name: 'if',
           conditions: [
-            { type: 'expression', value: { left: { type: 'variable', value: 'x' }, operator: '>', right: { type: 'value', value: 1 } }},
-            { type: 'expression', value: { left: { type: 'variable', value: 'y' }, operator: '==', right: { type: 'value', value: 2 } }},
-            { type: 'expression', value: { left: { type: 'variable', value: 'y' }, operator: '<=', right: { type: 'value', value: 300 } }}
+            { type: 'expression', value: { left: { type: 'variable', prefix: null, value: 'x' }, operator: '>', right: { type: 'value', value: 1 } }},
+            { type: 'expression', value: { left: { type: 'variable', prefix: null, value: 'y' }, operator: '==', right: { type: 'value', value: 2 } }},
+            { type: 'expression', value: { left: { type: 'variable', prefix: null, value: 'y' }, operator: '<=', right: { type: 'value', value: 300 } }}
           ],
           blocks: [
           [{ type: 'content', command: 'name', flags: ['flagA'], params: {} }],
@@ -144,7 +144,7 @@ describe('Parser', () => {
           condition: {
             type: 'expression',
             value: {
-              left: { type: 'variable', value: 'x' },
+              left: { type: 'variable', prefix: null, value: 'x' },
               operator: '>',
               right: { type: 'value', value: 1 }
             }
@@ -165,8 +165,8 @@ describe('Parser', () => {
         { type: 'content', command: 'name', flags: ['flagA'], params: {} },
         {
           type: 'logic', name: 'foreach',
-          child: { type: 'variable', value: 'child' },
-          children: { type: 'variable', value: 'children' },
+          child: { type: 'variable', prefix: null, value: 'child' },
+          children: { type: 'variable', prefix: null, value: 'children' },
           block: [{ type: 'content', command: 'name', flags: ['flagB'], params: {} }]
         },
         { type: 'content', command: 'name', flags: ['flagC'], params: {} }
@@ -184,23 +184,23 @@ describe('Parser', () => {
         { type: 'content', command: 'name', flags: ['flagA'], params: {} },
         {
           type: 'logic', name: 'let',
-          left: { type: 'variable', value: 'variable' },
+          left: { type: 'variable', prefix: null, value: 'variable' },
           right: { type: 'value', value: '123' },
         },
         {
           type: 'logic', name: 'let',
-          left: { type: 'variable', value: 'variable2' },
-          right: { type: 'variable', value: 'variable' },
+          left: { type: 'variable', prefix: null, value: 'variable2' },
+          right: { type: 'variable', prefix: null, value: 'variable' },
         },
         {
           type: 'logic', name: 'let',
-          left: { type: 'variable', value: 'variable3' },
+          left: { type: 'variable', prefix: null, value: 'variable3' },
           right: null,
         },
         { type: 'content', command: 'name', flags: ['flagB'], params: {} },
         {
           type: 'logic', name: 'let',
-          left: { type: 'variable', value: 'variable4' },
+          left: { type: 'variable', prefix: null, value: 'variable4' },
           right: { type: 'value', value: true },
         }
       ])
@@ -219,7 +219,7 @@ describe('Parser', () => {
               left: {
                 type: 'expression',
                 value: {
-                  left: { type: 'variable', value: 'x' },
+                  left: { type: 'variable', prefix: null, value: 'x' },
                   operator: '>',
                   right: { type: 'value', value: 1 }
                 }
@@ -237,7 +237,7 @@ describe('Parser', () => {
                           left: {
                             type: 'expression',
                             value: {
-                              left: { type: 'variable', value: 'x' },
+                              left: { type: 'variable', prefix: null, value: 'x' },
                               operator: '==',
                               right: { type: 'value', value: 'test' }
                             }
@@ -246,7 +246,7 @@ describe('Parser', () => {
                           right: {
                             type: 'expression',
                             value: {
-                              left: { type: 'variable', value: 'y' },
+                              left: { type: 'variable', prefix: null, value: 'y' },
                               operator: '>=',
                               right: { type: 'value', value: 30 }
                             }
@@ -254,7 +254,7 @@ describe('Parser', () => {
                         }
                       },
                       operator: '&&',
-                      right: { type: 'variable', value: 'a' },
+                      right: { type: 'variable', prefix: null, value: 'a' },
                     }
                   },
                   operator: '||',
@@ -264,7 +264,7 @@ describe('Parser', () => {
                       left: {
                         type: 'expression',
                         value: {
-                          left: { type: 'variable', value: 'b' },
+                          left: { type: 'variable', prefix: null, value: 'b' },
                           operator: '+',
                           right: { type: 'value', value: 2 }
                         }

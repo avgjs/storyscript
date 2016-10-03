@@ -1,7 +1,8 @@
 module.exports = {
-  variable(n) {
+  variable(prefix, n) {
     return {
       type: 'variable',
+      prefix: prefix.parse() || null,
       value: n.parse()
     };
   },
