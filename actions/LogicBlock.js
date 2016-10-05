@@ -112,7 +112,7 @@ module.exports = {
       name: 'let',
       explicit: true,
       left: variable.parse(),
-      right: null
+      right: { type: 'value', value: null }
     }
   }
 }
