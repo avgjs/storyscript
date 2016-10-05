@@ -13,32 +13,122 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var prettyjson = require('prettyjson');
+
 var parser = require('./libs/parser');
+var variable = require('./libs/variable');
+var { Block, WhileBlock, ForeachBlock } = require('./libs/block');
 
-var userInput = `
-[bg file="kodoyuri/data.xp3/bgimage/white.png" trans]
-[flow wait time=200]
-#if x>1 && ((x < 10 && z >= 100) || z) || n == 'xxx'
-[text set bgfile="kodoyuri/data.xp3/image/massage_bg2.png" color=0xffffff]
-[text set speed=50]
-#elseif y <= 0x11
-[bg file="kodoyuri/data.xp3/bgimage/h01.png" trans]
-#elseif y == (x + (1 - 1) * -2) / +4
-[bg file="kodoyuri/data.xp3/bgimage/white.png" trans]
-#else
-#end
-#while x < 0
-[flow wait time=200]
-#end
+class StoryScript {
+  constructor() {
+    this.BLOCKSTACK = [];
+    this.CURRENTBLOCK = null;
+  }
+  load(string) {
+    const result = parser.parse(string);
+    const system = new Block(result);
+    this.CURRENTBLOCK = system;
+    this.BLOCKSTACK = [];
+    // variable.reset();
+  }
+  [Symbol.iterator]() {
+    return this;
+  }
+  next() {
+    let {value, done} = this.CURRENTBLOCK.next();
+    if (done) {
+      var CURRENTBLOCK = this.BLOCKSTACK.pop();
+      if (CURRENTBLOCK) {
+        this.CURRENTBLOCK = CURRENTBLOCK;
+        variable.popScope();
+        return this.next();
+      } else {
+        return { done: true }
+      }
+    } else {
+      const retValue = this.handleScript(value);
+      if (retValue) {
+        return { value: retValue,  done: false}
+      } else {
+        // handleLogic will return undefined, so should exec next line
+        return this.next();
+      }
+    }
+  }
+  handleScript(argLine) {
+    // deep copy
+    const line = Object.assign({}, argLine);
 
-#foreach child in children
-[text set speed=50]
-#end
+    if (line.type === 'content') {
+      return this.handleContent(line);
+    } else if (line.type === 'logic') {
+      return this.handleLogic(line);
+    } else {
+      throw `Unrecognized type ${line.type}`;
+    }
+  }
 
-[text show trans]`;
+  handleContent(line) {
+    const params = line.params;
+    const keys = Object.keys(params);
+    for (const key of keys) {
+      params[key] = params[key].value;
+    }
+    return line;
+  }
 
-var time = Date.now();
-var result = parser.parse(userInput);
-// console.log(Date.now() - time);
-console.log(prettyjson.render(result));
+  handleLogic(line) {
+    switch (line.name) {
+      case 'if': return this.handleLogic_IF(line);break;
+      case 'while': return this.handleLogic_WHILE(line);break;
+      case 'foreach': return this.handleLogic_FOREACH(line);break;
+      case 'let': return this.handleLogic_LET(line);break;
+      default: throw `Unrecognized name ${line.name}`;
+    }
+  }
+
+  handleLogic_IF(line) {
+    let blockIndex = 0;
+    for (const condition of line.conditions) {
+      if (variable.calc(condition)) {
+        break;
+      } else {
+        blockIndex++;
+      }
+    }
+    this.BLOCKSTACK.push(this.CURRENTBLOCK);
+    const blockData = line.blocks[blockIndex];
+    const block = new Block(blockData);
+    this.CURRENTBLOCK = block;
+    // variable.pushScope();
+  }
+
+  handleLogic_WHILE(line) {
+    const result = variable.calc(line.condition);
+    if (result) {
+      this.BLOCKSTACK.push(this.CURRENTBLOCK);
+      const blockData = line.block;
+      const block = new WhileBlock(blockData, line.condition);
+      this.CURRENTBLOCK = block;
+    }
+    // variable.pushScope();
+  }
+
+  handleLogic_FOREACH(line) {
+    const children = variable.calc(line.children);
+    if (children instanceof Array) {
+      this.BLOCKSTACK.push(this.CURRENTBLOCK);
+      const blockData = line.block;
+      const block = new ForeachBlock(blockData, line.child, line.children);
+      this.CURRENTBLOCK = block;
+    } else {
+      throw '[Foreach] Children must be a array';
+    }
+    // variable.pushScope();
+  }
+
+  handleLogic_LET(line) {
+    variable.assign(line.left.value, line.left.prefix, line.right, line.explicit);
+  }
+}
+
+module.exports = StoryScript;
