@@ -17,10 +17,11 @@
 var parser = require('./parser');
 var variable = require('./variable');
 
-class Block {
-  constructor(data) {
+class IfBlock {
+  constructor(data, blockIndex) {
     this.reset();
     this.data = data;
+    this.blockIndex = blockIndex;
     variable.pushScope();
   }
   reset() {
@@ -28,7 +29,19 @@ class Block {
     this.currentLine = 0;
     this.done = false;
   }
-
+  getData() {
+    return {
+      type: 'if',
+      currentLine: this.currentLine,
+      blockIndex: this.blockIndex
+    }
+  }
+  setCurrentLine(no) {
+    this.currentLine = no;
+  }
+  getLine(no) {
+    return this.data[no];
+  }
   [Symbol.iterator]() {
     return this;
   }
@@ -56,7 +69,18 @@ class WhileBlock {
     this.currentLine = 0;
     this.done = false;
   }
-
+  getData() {
+    return {
+      type: 'while',
+      currentLine: this.currentLine
+    }
+  }
+  setCurrentLine(no) {
+    this.currentLine = no;
+  }
+  getLine(no) {
+    return this.data[no];
+  }
   [Symbol.iterator]() {
     return this;
   }
@@ -95,7 +119,18 @@ class ForeachBlock {
     this.currentLine = 0;
     this.done = false;
   }
-
+  getData() {
+    return {
+      type: 'foreach',
+      currentLine: this.currentLine
+    }
+  }
+  setCurrentLine(no) {
+    this.currentLine = no;
+  }
+  getLine(no) {
+    return this.data[no];
+  }
   [Symbol.iterator]() {
     return this;
   }
@@ -121,4 +156,4 @@ class ForeachBlock {
   }
 }
 
-module.exports = { Block, WhileBlock, ForeachBlock };
+module.exports = { IfBlock, WhileBlock, ForeachBlock };

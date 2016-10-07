@@ -28,9 +28,9 @@ var userInput = `
 #$open = false
 #let xxx = "sdfdsf"
 #if x > 0 && xxx == 'sdfdsf'
-  [name flagA]
   #let x = 2
   #let $open = 123
+  [name flagA]
   #x = 3
 #else
   [name flagB]
@@ -39,11 +39,15 @@ var userInput = `
 #let i = 0
 #while i < 5
   [name flagX]
-  #let i
   #i = i + 1
 #end
-
+测试 一下 sdjsdfj /c  /* 注释 */
+// [wb]545第二行
 #let y = false
+/*
+ * 其他测试
+ 123
+ */
 #let aaaa = 11
 [name flagC]
 #aaaa = aaaa ^ 2
@@ -52,8 +56,14 @@ var userInput = `
 const story = new StoryScript();
 story.load(userInput);
 
+let i = 0;
 for (var value of story) {
+  if (i === 0) {
+    console.log(JSON.stringify(story.getData(), null, '  '))
+  }
+  i++
   console.log(value)
 }
 
 console.log(variable.dump())
+console.log(story.getData())

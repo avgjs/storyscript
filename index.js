@@ -16,7 +16,7 @@
 
 var parser = require('./libs/parser');
 var variable = require('./libs/variable');
-var { Block, WhileBlock, ForeachBlock } = require('./libs/block');
+var { IfBlock, WhileBlock, ForeachBlock } = require('./libs/block');
 
 class StoryScript {
   constructor() {
@@ -25,10 +25,75 @@ class StoryScript {
   }
   load(string) {
     const result = parser.parse(string);
-    const system = new Block(result);
+    const system = new IfBlock(result);
     this.CURRENTBLOCK = system;
     this.BLOCKSTACK = [];
     // variable.reset();
+  }
+  getData() {
+    const blocks = [];
+    for (const [node, block] of [...this.BLOCKSTACK, this.CURRENTBLOCK].reverse().entries()) {
+      let blockData = block.getData();
+      blockData.scope = variable.getScope(node);
+      blocks.push(blockData);
+    }
+    return {
+      blocks: blocks.reverse(),
+      globalScope: variable.getGlobalScope(),
+      saveScope: variable.getSaveScope()
+    }
+  }
+  setData(data, object) {
+    variable.getGlobalScope(object.globalScope);
+    variable.getSaveScope(object.saveScope);
+
+    const result = parser.parse(data);
+    const system = new IfBlock(result);
+    this.CURRENTBLOCK = system;
+    this.BLOCKSTACK = [];
+
+    const scopes = [object.blocks[0].scope];
+
+    for (const i = 0; i < object.blocks.length; i++) {
+      const block = object.blocks[i];
+      const nextBlock = object.blocks[i + 1];
+      const lastLine = block.currentLine - 1;
+      const line = this.CURRENTBLOCK.getLine(lastLine);
+      if (line.name === nextBlock.type) {
+        switch (line.name) {
+          case 'if':
+            const ifBlock = new IfBlock(line.blocks[nextBlock.blockIndex], nextBlock.blockIndex);
+            ifBlock.setCurrentLine(nextBlock.currentLine);
+            scopes.push(nextBlock.scope);
+            variable.popScope();
+            this.BLOCKSTACK.push(this.CURRENTBLOCK);
+            this.CURRENTBLOCK = ifBlock;
+            break;
+          case 'while':
+            const whileBlock = new WhileBlock(line.block, line.condition);
+            whileBlock.setCurrentLine(nextBlock.currentLine);
+            scopes.push(nextBlock.scope);
+            variable.popScope();
+            this.BLOCKSTACK.push(this.CURRENTBLOCK);
+            this.CURRENTBLOCK = whileBlock;
+            break;
+          case 'foreach':
+            const foreachBlock = new ForeachBlock(line.block, line.child, line.children);
+            foreachBlock.setCurrentLine(nextBlock.currentLine);
+            scopes.push(nextBlock.scope);
+            variable.popScope();
+            this.BLOCKSTACK.push(this.CURRENTBLOCK);
+            this.CURRENTBLOCK = foreachBlock;
+            break;
+          default:
+            throw 'Bad savedata';
+        }
+      } else {
+        throw 'Bad savedata';
+      }
+    }
+
+    variable.setScopes(scopes);
   }
   [Symbol.iterator]() {
     return this;
@@ -62,6 +127,8 @@ class StoryScript {
       return this.handleContent(line);
     } else if (line.type === 'logic') {
       return this.handleLogic(line);
+    } else if (line.type === 'comment') {
+      return null;
     } else {
       throw `Unrecognized type ${line.type}`;
     }
@@ -97,7 +164,7 @@ class StoryScript {
     }
     this.BLOCKSTACK.push(this.CURRENTBLOCK);
     const blockData = line.blocks[blockIndex];
-    const block = new Block(blockData);
+    const block = new IfBlock(blockData, blockIndex);
     this.CURRENTBLOCK = block;
     // variable.pushScope();
   }

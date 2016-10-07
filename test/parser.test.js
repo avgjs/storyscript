@@ -198,7 +198,7 @@ describe('Parser', () => {
           type: 'logic', name: 'let',
           explicit: true,
           left: { type: 'variable', prefix: null, value: 'variable3' },
-          right: null,
+          right: { type: 'value', value: null},
         },
         { type: 'content', command: 'name', flags: ['flagB'], params: {} },
         {

@@ -14,20 +14,31 @@
  * limitations under the License.
  */
 
+module.exports = `
 BKS {
   Scripts
     = LogicBlock*
 
   LogicBlock
-    = IF LogicBlock* (ELSEIF LogicBlock*)* (ELSE LogicBlock*)? END  -- IF
+    = Comment
+    | IF LogicBlock* (ELSEIF LogicBlock*)* (ELSE LogicBlock*)? END  -- IF
     | WHILE LogicBlock* END  -- WHILE
     | FOREACH LogicBlock* END  -- FOREACH
     | LET                      -- LET
     | StoryLine                       -- Story
 
+  Comment = "//" comment_single     -- single
+          | "/*" comment_multi "*/"       -- multi
+
+  comment_single = (~("\\n" | "\\r") any)+
+  comment_multi = (~("*/") any)+
+
   StoryLine
     = "@" command content    -- formatA
       | "[" command content "]"    -- formatB
+      | text -- formatC
+
+  text = (~("[" | "@" | "#" | "\\n" | "\\r" | "//" | "/*") any)+
 
   command = key
 
@@ -41,21 +52,21 @@ BKS {
 
   value = string | number | boolean | "null"
 
-  string = "\"" doubleQuoteStringContent* "\"" -- doubleQuote
-      | "\'" singleQuoteStringContent* "\'" -- singleQuote
+  string = "\\"" doubleQuoteStringContent* "\\"" -- doubleQuote
+      | "\\'" singleQuoteStringContent* "\\'" -- singleQuote
 
-// ~("\'" | "\\" ) any  -- nonEscaped
+// ~("\\'" | "\\\\" ) any  -- nonEscaped
 
-  singleQuoteStringContent = ~("\'") any  -- nonEscaped
-      | "\\" escapeCharacter                 -- escaped
+  singleQuoteStringContent = ~("\\'") any  -- nonEscaped
+      | "\\\\" escapeCharacter                 -- escaped
 
-  doubleQuoteStringContent = ~("\"") any  -- nonEscaped
-      | "\\" escapeCharacter                 -- escaped
+  doubleQuoteStringContent = ~("\\"") any  -- nonEscaped
+      | "\\\\" escapeCharacter                 -- escaped
 
-  singleEscapeCharacter = "'"|"\""|"\\"|"b"|"f"|"n"|"r"|"t"|"v"
+  singleEscapeCharacter = "'"|"\\""|"\\\\"|"b"|"f"|"n"|"r"|"t"|"v"
   escapeCharacter = singleEscapeCharacter | "x" | "u"
 
-  quote = "\"" | "\'"
+  quote = "\\"" | "\\'"
 
   boolean = ("true" | "false") ~variable
 
@@ -117,3 +128,4 @@ BKS {
   | variable
 
 }
+`;

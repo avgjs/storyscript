@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-var ohm = require('ohm-js');
-// var fs = require('fs');
-var actions = require('../actions');
-var contents = require('../ohm/bks.ohm');
-
-var myGrammar = ohm.grammar(contents);
-var mySemantics = myGrammar.createSemantics();
-mySemantics.addOperation('parse', actions);
-
-exports.parse = function (string) {
-  var m = myGrammar.match(string);
-  if (m.succeeded()) {
-    return mySemantics(m).parse();
-  } else {
-    throw m.message;
-  }
+module.exports = {
+  Comment_single(head, text) {
+    return {
+      type: 'comment',
+      value: text.parse()
+    }
+  },
+  Comment_multi(head, text, foot) {
+    return {
+      type: 'comment',
+      value: text.parse()
+    }
+  },
 }

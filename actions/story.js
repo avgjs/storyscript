@@ -33,6 +33,15 @@ module.exports = {
       params: content.params,
     }
   },
+  StoryLine_formatC(text) {
+    var textContent = text.parse();
+    return {
+      type: 'content',
+      command: '*',
+      flags: [],
+      params: { raw: { type: 'value', value: textContent } },
+    }
+  },
   command(key) {
     return key.parse();
   }

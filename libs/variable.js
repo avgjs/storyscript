@@ -121,11 +121,30 @@ module.exports = {
       CURRENTSCOPE: CURRENTSCOPE
     }
   },
+  getGlobalScope() {
+    return GLOBAL;
+  },
+  getSaveScope() {
+    return SAVE;
+  },
+  getScope(node) {
+    return [...SCOPES, CURRENTSCOPE][SCOPES.length - node]
+  },
+  setGlobalScope(scope) {
+    GLOBAL = scope;
+  },
+  setSaveScope(scope) {
+    SAVE = scope;
+  },
+  setScopes(scopes) {
+    SCOPES = SCOPES;
+    this.popScope();
+  },
   pushScope() {
     SCOPES.push(CURRENTSCOPE);
     CURRENTSCOPE = {};
   },
-  popScope(name) {
+  popScope() {
     CURRENTSCOPE = SCOPES.pop();
   },
   calc(exp, node) {
