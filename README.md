@@ -1,6 +1,6 @@
 # Storyscript
 
-[中文版请点击此处 (View Chinese Edition)]()
+[中文版请点击此处 (View Chinese Edition)](README_zh.md)
 
 ## Introduction and Design Ideas
 
