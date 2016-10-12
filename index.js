@@ -18,7 +18,7 @@ var parser = require('./libs/parser');
 var variable = require('./libs/variable');
 var { IfBlock, WhileBlock, ForeachBlock } = require('./libs/block');
 
-class StoryScript {
+export default class StoryScript {
   constructor() {
     this.BLOCKSTACK = [];
     this.CURRENTBLOCK = null;
@@ -54,7 +54,7 @@ class StoryScript {
 
     const scopes = [object.blocks[0].scope];
 
-    for (const i = 0; i < object.blocks.length; i++) {
+    for (let i = 0; i < object.blocks.length; i++) {
       const block = object.blocks[i];
       const nextBlock = object.blocks[i + 1];
       const lastLine = block.currentLine - 1;
@@ -198,4 +198,4 @@ class StoryScript {
   }
 }
 
-module.exports = StoryScript;
+// module.exports = StoryScript;

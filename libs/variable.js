@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-const GLOBAL = {},
+let GLOBAL = {},
       SAVE = {},
       SCOPES = [];
-let   CURRENTSCOPE = {}
+let   CURRENTSCOPE = {};
 
 function calculate(exp, node=0) {
   switch (exp.type) {

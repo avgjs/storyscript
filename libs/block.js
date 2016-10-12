@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-var parser = require('./parser');
 var variable = require('./variable');
 
 class IfBlock {

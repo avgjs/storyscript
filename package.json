@@ -2,8 +2,9 @@
   "name": "avg-storyscript",
   "version": "0.0.1",
   "description": "Build-in Story Script System for AVG.js.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "webpack --progress --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -15,7 +16,11 @@
   "author": "Icemic Jia <bingfeng.web@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "ohm-js": "^0.12.3"
+    "babel-core": "^6.17.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-latest": "^6.16.0",
+    "ohm-js": "^0.12.3",
+    "webpack": "^1.13.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",
