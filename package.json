@@ -4,7 +4,7 @@
   "description": "Build-in Story Script System for AVG.js.",
   "main": "dist/index.js",
   "scripts": {
-    "install": "webpack --progress --colors",
+    "postinstall": "webpack --progress --colors",
     "build": "webpack --progress --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
