@@ -15,6 +15,10 @@
     "script"
   ],
   "author": "Icemic Jia <bingfeng.web@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avgjs/storyscript.git"
+  },
   "license": "Apache-2.0",
   "dependencies": {
     "babel-core": "^6.17.0",
