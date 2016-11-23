@@ -33,7 +33,23 @@ module.exports = {
       params: content.params,
     }
   },
-  StoryLine_formatC(text) {
+  StoryLine_formatC(head, command) {
+    return {
+      type: 'content',
+      command: command.parse(),
+      flags: [],
+      params: {},
+    }
+  },
+  StoryLine_formatD(head, command, foot) {
+    return {
+      type: 'content',
+      command: command.parse(),
+      flags: [],
+      params: {},
+    }
+  },
+  StoryLine_formatE(text) {
     var textContent = text.parse();
     return {
       type: 'content',

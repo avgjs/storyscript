@@ -24,6 +24,16 @@ describe('Parser', () => {
       }]);
     });
 
+    it('parse no parameter', () => {
+      expect(parse('[name]'))
+      .to.eql([{
+        type: 'content',
+        command: 'name',
+        flags: [],
+        params: {}
+      }]);
+    });
+
     it('parse parameter value of ascii string', () => {
       expect(parse('@name param="string"'))
       .to.eql([{

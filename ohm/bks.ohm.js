@@ -36,7 +36,9 @@ BKS {
   StoryLine
     = "@" command content    -- formatA
       | "[" command content "]"    -- formatB
-      | text -- formatC
+      | "@" command    -- formatC
+      | "[" command "]"    -- formatD
+      | text -- formatE
 
   text = (~("[" | "@" | "#" | "\\n" | "\\r" | "//" | "/*") any)+
 
