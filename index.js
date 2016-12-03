@@ -43,16 +43,23 @@ export default class StoryScript {
       saveScope: variable.getSaveScope()
     }
   }
-  setData(data, object) {
-    variable.getGlobalScope(object.globalScope);
-    variable.getSaveScope(object.saveScope);
+  setData(object) {
+    variable.setGlobalScope(object.globalScope);
+    variable.setSaveScope(object.saveScope);
 
-    const result = parser.parse(data);
-    const system = new IfBlock(result);
-    this.CURRENTBLOCK = system;
-    this.BLOCKSTACK = [];
+    // must has excuted .load()
+    // const result = parser.parse(data);
+    // const system = new IfBlock(result);
+    // this.CURRENTBLOCK = system;
+    // this.BLOCKSTACK = [];
 
     const scopes = [object.blocks[0].scope];
+    variable.setScopes(scopes);
+    this.CURRENTBLOCK.setCurrentLine(object.blocks[0].currentLine);
+
+    if (object.blocks.length === 1) {
+      return true
+    }
 
     for (let i = 0; i < object.blocks.length; i++) {
       const block = object.blocks[i];
@@ -64,24 +71,24 @@ export default class StoryScript {
           case 'if':
             const ifBlock = new IfBlock(line.blocks[nextBlock.blockIndex], nextBlock.blockIndex);
             ifBlock.setCurrentLine(nextBlock.currentLine);
-            scopes.push(nextBlock.scope);
-            variable.popScope();
+            variable.pushScope(nextBlock.scope);
+            // variable.popScope();
             this.BLOCKSTACK.push(this.CURRENTBLOCK);
             this.CURRENTBLOCK = ifBlock;
             break;
           case 'while':
             const whileBlock = new WhileBlock(line.block, line.condition);
             whileBlock.setCurrentLine(nextBlock.currentLine);
-            scopes.push(nextBlock.scope);
-            variable.popScope();
+            variable.pushScope(nextBlock.scope);
+            // variable.popScope();
             this.BLOCKSTACK.push(this.CURRENTBLOCK);
             this.CURRENTBLOCK = whileBlock;
             break;
           case 'foreach':
             const foreachBlock = new ForeachBlock(line.block, line.child, line.children);
             foreachBlock.setCurrentLine(nextBlock.currentLine);
-            scopes.push(nextBlock.scope);
-            variable.popScope();
+            variable.pushScope(nextBlock.scope);
+            // variable.popScope();
             this.BLOCKSTACK.push(this.CURRENTBLOCK);
             this.CURRENTBLOCK = foreachBlock;
             break;
@@ -93,7 +100,7 @@ export default class StoryScript {
       }
     }
 
-    variable.setScopes(scopes);
+    // variable.setScopes(scopes);
   }
   [Symbol.iterator]() {
     return this;

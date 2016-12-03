@@ -140,9 +140,9 @@ module.exports = {
     SCOPES = SCOPES;
     this.popScope();
   },
-  pushScope() {
+  pushScope(scope={}) {
     SCOPES.push(CURRENTSCOPE);
-    CURRENTSCOPE = {};
+    CURRENTSCOPE = scope;
   },
   popScope() {
     CURRENTSCOPE = SCOPES.pop();
