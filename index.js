@@ -32,40 +32,48 @@ export default class StoryScript {
     this.BLOCKSTACK = [];
     // variable.reset();
   }
-  getData() {
+  getBlockData() {
     const blocks = [];
     for (const [node, block] of [...this.BLOCKSTACK, this.CURRENTBLOCK].reverse().entries()) {
       let blockData = block.getData();
       blockData.scope = variable.getScope(node);
       blocks.push(blockData);
     }
+    return blocks.reverse();
+  }
+  getGlobalScope() {
+    return variable.getGlobalScope();
+  }
+  getSaveScope() {
+    return variable.getSaveScope();
+  }
+  // @deprecated
+  getData() {
+    console.warn('[Storyscript] getData() has been deprecated!');
     return {
-      blocks: blocks.reverse(),
-      globalScope: variable.getGlobalScope(),
-      saveScope: variable.getSaveScope()
+      blocks: this.getBlockData(),
+      globalScope: this.getGlobalScope(),
+      saveScope: this.getSaveScope()
     }
   }
-  setData(object) {
-    variable.setGlobalScope(object.globalScope);
-    variable.setSaveScope(object.saveScope);
-
-    // must has excuted .load()
-    // const result = parser.parse(data);
-    // const system = new IfBlock(result);
-    // this.CURRENTBLOCK = system;
-    // this.BLOCKSTACK = [];
-
-    const scopes = [object.blocks[0].scope];
+  setGlobalScope(scope) {
+    variable.setGlobalScope(scope);
+  }
+  setSaveScope(scope) {
+    variable.setSaveScope(scope);
+  }
+  setBlockData(blocks) {
+    const scopes = [blocks[0].scope];
     variable.setScopes(scopes);
-    this.CURRENTBLOCK.setCurrentLine(object.blocks[0].currentLine);
+    this.CURRENTBLOCK.setCurrentLine(blocks[0].currentLine);
 
-    if (object.blocks.length === 1) {
+    if (blocks.length === 1) {
       return true
     }
 
-    for (let i = 0; i < object.blocks.length; i++) {
-      const block = object.blocks[i];
-      const nextBlock = object.blocks[i + 1];
+    for (let i = 0; i < blocks.length; i++) {
+      const block = blocks[i];
+      const nextBlock = blocks[i + 1];
       const lastLine = block.currentLine - 1;
       const line = this.CURRENTBLOCK.getLine(lastLine);
       if (line.name === nextBlock.type) {
@@ -101,8 +109,13 @@ export default class StoryScript {
         throw 'Bad savedata';
       }
     }
-
-    // variable.setScopes(scopes);
+  }
+  // @deprecated
+  setData(object) {
+    console.warn('[Storyscript] setData() has been deprecated!');
+    this.setGlobalScope(object.globalScope);
+    this.setSaveScope(object.saveScope);
+    this.setBlockData(object.blocks);
   }
   [Symbol.iterator]() {
     return this;
