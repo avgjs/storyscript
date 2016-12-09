@@ -19,9 +19,11 @@ var variable = require('./libs/variable');
 var { IfBlock, WhileBlock, ForeachBlock } = require('./libs/block');
 
 export default class StoryScript {
-  constructor() {
+  constructor(onGlobalChanged) {
     this.BLOCKSTACK = [];
     this.CURRENTBLOCK = null;
+
+    this.onGlobalChanged = onGlobalChanged;
   }
   load(string) {
     const result = parser.parse(string);
@@ -201,6 +203,9 @@ export default class StoryScript {
   }
 
   handleLogic_LET(line) {
+    if (line.left.prefix === '$') {
+      this.onGlobalChanged && this.onGlobalChanged();
+    }
     variable.assign(line.left.value, line.left.prefix, line.right, line.explicit);
   }
 }
