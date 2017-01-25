@@ -56,7 +56,7 @@ describe('Parser', () => {
       }]);
     });
     it('parse parameter value of number', () => {
-      expect(parse('@name param1=123 param2=00123 param3=0x123'))
+      expect(parse('@name param1=123 param2=00123 param3=0x123 param4=-10 param5=+0x20 param6=10.02 param7=.4'))
       .to.eql([{
         type: 'content',
         command: 'name',
@@ -65,6 +65,10 @@ describe('Parser', () => {
           param1: { type: 'value', value: 123},
           param2: { type: 'value', value: 123},
           param3: { type: 'value', value: 0x123},
+          param4: { type: 'value', value: -10},
+          param5: { type: 'value', value: 0x20},
+          param6: { type: 'value', value: 10.02},
+          param7: { type: 'value', value: 0.4},
         }
       }]);
     });
@@ -92,8 +96,24 @@ describe('Parser', () => {
         }
       }]);
     });
+    it('parse parameter value of array', () => {
+      expect(parse('[name param1=[1,2,null,4] param2=[1,false,"test",[1,2,null]]]'))
+      .to.eql([{
+        type: 'content',
+        command: 'name',
+        flags: [],
+        params: {
+          param1: { type: 'value', value: [1,2,null,4]},
+          param2: { type: 'value', value: [1,false,"test",[1,2,null]]}
+        }
+      }]);
+    });
 
     it('throw when wrong syntex', () => {
+      expect(() => parse('[name param1=xxx]')).to.throw(/Line 1, col 14/);
+      expect(() => parse('[name param1="string]')).to.throw(/Line 1, col 22/);
+      expect(() => parse('[name param1=123true]')).to.throw(/Line 1, col 17/);
+      expect(() => parse('[name param1= 123]')).to.throw(/Line 1, col 14/);
       expect(() => parse('@name param1=xxx')).to.throw(/Line 1, col 14/);
       expect(() => parse('@name param1="string')).to.throw(/Line 1, col 21/);
       expect(() => parse('@name param1=123true')).to.throw(/Line 1, col 17/);
@@ -222,7 +242,10 @@ describe('Parser', () => {
     it('parse complex logic expression', () => {
       expect(parse(`
         #while x > 1 && ((x == 'test' || y >= 30) && a) || (b + 2) * -10
+        @name
+        这是一句话，哈哈~！
         @name flagB
+        Some words!
         #end
       `)).to.eql([
         {
@@ -298,7 +321,12 @@ describe('Parser', () => {
               }
             }
           },
-          block: [{ type: 'content', command: 'name', flags: ['flagB'], params: {} }]
+          block: [
+            { type: 'content', command: 'name', flags: [], params: {} },
+            { type: 'content', command: '*', flags: [], params: { raw: { type: 'value', value: '这是一句话，哈哈~！' } } },
+            { type: 'content', command: 'name', flags: ['flagB'], params: {} },
+            { type: 'content', command: '*', flags: [], params: { raw: { type: 'value', value: 'Some words!' } } }
+          ]
         }
       ])
     });

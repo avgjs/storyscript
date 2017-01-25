@@ -34,9 +34,9 @@ BKS {
   comment_multi = (~("*/") any)+
 
   StoryLine
-    = "@" command content    -- formatA
+    = "@" command content ("\\r"|"\\n")?  -- formatA
       | "[" command content "]"    -- formatB
-      | "@" command    -- formatC
+      | "@" command ("\\r"|"\\n")?  -- formatC
       | "[" command "]"    -- formatD
       | text -- formatE
 
@@ -52,7 +52,9 @@ BKS {
 
   key = (letter | number | "_")+
 
-  value = string | number | boolean | "null"
+  value = string | number | boolean | "null" | array
+
+  array = "[" listOf<value, ","> "]"
 
   string = "\\"" doubleQuoteStringContent* "\\"" -- doubleQuote
       | "\\'" singleQuoteStringContent* "\\'" -- singleQuote
@@ -73,7 +75,8 @@ BKS {
   boolean = ("true" | "false") ~variable
 
   number  (a number)
-    = digit* "." digit+  --  fract
+    = ("-"|"+") number   -- sign
+    | digit* "." digit+  --  fract
     | "0x" hexdigit+        --  hex
     | digit+             --  whole
 
