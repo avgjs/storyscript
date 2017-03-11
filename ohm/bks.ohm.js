@@ -114,16 +114,31 @@ BKS {
   booleanOperator = "&&" | "||"
 
   JudgeExp
-    = MathExp judgeOperator MathExp     -- judge
-    | MathExp
+    = AddExp judgeOperator AddExp     -- judge
+    | AddExp
 
   judgeOperator = "==" | ">=" | "<=" | ">" | "<"
 
-  MathExp
-  = MathExp mathOperator MathExp  -- math
-  | PriExp
+  // MathExp
+  // = MathExp mathOperator MathExp  -- math
+  // | PriExp
 
-  mathOperator = "+" | "-" | "*" | "/" | "^" | "%"
+  // mathOperator = "+" | "-" | "*" | "/" | "^" | "%"
+
+  AddExp
+  = AddExp ("+" | "-") MulExp  -- add
+  // | AddExp "-" MulExp  -- minus
+  | MulExp
+
+  MulExp
+    = MulExp ("*" | "/" | "%") ExpExp  -- mul
+    // | MulExp "/" ExpExp  -- divide
+    // | MulExp "%" ExpExp  -- mod
+    | ExpExp
+
+  ExpExp
+    = PriExp "^" ExpExp  -- power
+    | PriExp
 
   PriExp
   = "(" Exp ")"  -- paren

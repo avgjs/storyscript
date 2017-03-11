@@ -241,7 +241,7 @@ describe('Parser', () => {
     });
 
     it('parse computation', () => {
-      expect(parse(`#let x = 1 + 22.3 + 4`)).to.eql([
+      expect(parse(`#let x = 1 - 22.3 + 4`)).to.eql([
         {
           type: "logic",
           name: "let",
@@ -255,8 +255,64 @@ describe('Parser', () => {
             type: "expression",
             value: {
               left: {
+                type: "expression",
+                value: {
+                  left: {
+                    type: "value",
+                    value: 1
+                  },
+                  operator: "-",
+                  right: {
+                    type: "value",
+                    value: 22.3
+                  }
+                }
+              },
+              operator: "+",
+              right: {
                 type: "value",
-                value: 1
+                value: 4
+              }
+            }
+          }
+        }
+      ]);
+      expect(parse(`#let x = 1 + 2 * 3 + 4 % 2`)).to.eql([
+        {
+          type: "logic",
+          name: "let",
+          explicit: true,
+          left: {
+            prefix: null,
+            type: "variable",
+            value: "x"
+          },
+          right: {
+            type: "expression",
+            value: {
+              left: {
+                type: "expression",
+                value: {
+                  left: {
+                    type: 'value',
+                    value: 1
+                  },
+                  operator: '+',
+                  right: {
+                    type: 'expression',
+                    value: {
+                      left: {
+                        type: 'value',
+                        value: 2
+                      },
+                      operator: '*',
+                      right: {
+                        type: 'value',
+                        value: 3
+                      }
+                    }
+                  }
+                }
               },
               operator: "+",
               right: {
@@ -264,12 +320,12 @@ describe('Parser', () => {
                 value: {
                   left: {
                     type: "value",
-                    value: 22.3
+                    value: 4
                   },
-                  operator: "+",
+                  operator: '%',
                   right: {
                     type: "value",
-                    value: 4
+                    value: 2
                   }
                 }
               }
@@ -281,7 +337,7 @@ describe('Parser', () => {
 
     it('parse complex logic expression', () => {
       expect(parse(`
-        #while x > 1 && ((x == 'test' || y >= 30) && a) || (b + 2) * -10
+        #while x > 1 + 1 && ((x == 'test' || y >= 30) && a) || (b + 2) * -10
         [name]
         这是一句话，哈哈~！
         [name flagB]
@@ -298,7 +354,14 @@ describe('Parser', () => {
                 value: {
                   left: { type: 'variable', prefix: null, value: 'x' },
                   operator: '>',
-                  right: { type: 'value', value: 1 }
+                  right: {
+                    type: 'expression',
+                    value: {
+                      left: { type: 'value', value: 1 },
+                      operator: '+',
+                      right: { type: 'value', value: 1 }
+                    }
+                  }
                 }
               },
               operator: '&&',
