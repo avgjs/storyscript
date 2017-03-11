@@ -35,7 +35,7 @@ describe('Parser', () => {
     });
 
     it('parse parameter value of ascii string', () => {
-      expect(parse('@name param="string"'))
+      expect(parse('[name param="string"]'))
       .to.eql([{
         type: 'content',
         command: 'name',
@@ -44,7 +44,7 @@ describe('Parser', () => {
       }]);
     });
     it('parse parameter value of non-ascii string', () => {
-      expect(parse('@name param="中文测试,日本語の分析テスト" param2=\'中a文s\\测**|/试%……%\''))
+      expect(parse('[name param="中文测试,日本語の分析テスト" param2=\'中a文s\\测**|/试%……%\']'))
       .to.eql([{
         type: 'content',
         command: 'name',
@@ -56,7 +56,7 @@ describe('Parser', () => {
       }]);
     });
     it('parse parameter value of number', () => {
-      expect(parse('@name param1=123 param2=00123 param3=0x123 param4=-10 param5=+0x20 param6=10.02 param7=.4'))
+      expect(parse('[name param1=123 param2=00123 param3=0x123 param4=-10 param5=+0x20 param6=10.02 param7=.4]'))
       .to.eql([{
         type: 'content',
         command: 'name',
@@ -73,7 +73,7 @@ describe('Parser', () => {
       }]);
     });
     it('parse parameter value of boolean', () => {
-      expect(parse('@name param=true param2=false'))
+      expect(parse('[name param=true param2=false]'))
       .to.eql([{
         type: 'content',
         command: 'name',
@@ -85,7 +85,7 @@ describe('Parser', () => {
       }]);
     });
     it('parse parameter value of null', () => {
-      expect(parse('@name param=null param2=false'))
+      expect(parse('[name param=null param2=false]'))
       .to.eql([{
         type: 'content',
         command: 'name',
@@ -122,7 +122,7 @@ describe('Parser', () => {
 
     it('parse multi lines', () => {
       expect(parse(`
-        @name param=123
+        [name param=123]
         [name flag]
       `))
       .to.eql([
@@ -136,13 +136,13 @@ describe('Parser', () => {
     it('parse IF-ELSEIF-ELSE', () => {
       expect(parse(`
         #if x > 1
-        @name flagA
+        [name flagA]
         #elseif y == 2
         #elseif y <= 300
         #else
-        @name flagB
+        [name flagB]
         #end
-        @name flagC
+        [name flagC]
       `)).to.eql([
         {
           type: 'logic', name: 'if',
@@ -162,11 +162,11 @@ describe('Parser', () => {
     });
     it('parse WHILE', () => {
       expect(parse(`
-        @name flagA
+        [name flagA]
         #while x > 1
-        @name flagB
+        [name flagB]
         #end
-        @name flagC
+        [name flagC]
       `)).to.eql([
         { type: 'content', command: 'name', flags: ['flagA'], params: {} },
         {
@@ -186,11 +186,11 @@ describe('Parser', () => {
     });
     it('parse FOREACH', () => {
       expect(parse(`
-        @name flagA
+        [name flagA]
         #foreach child in children
-        @name flagB
+        [name flagB]
         #end
-        @name flagC
+        [name flagC]
       `)).to.eql([
         { type: 'content', command: 'name', flags: ['flagA'], params: {} },
         {
@@ -204,11 +204,11 @@ describe('Parser', () => {
     });
     it('parse LET', () => {
       expect(parse(`
-        @name flagA
+        [name flagA]
         #let variable = "123"
         #let variable2 = variable
         #let variable3
-        @name flagB
+        [name flagB]
         #variable4 = true
       `)).to.eql([
         { type: 'content', command: 'name', flags: ['flagA'], params: {} },
@@ -242,9 +242,9 @@ describe('Parser', () => {
     it('parse complex logic expression', () => {
       expect(parse(`
         #while x > 1 && ((x == 'test' || y >= 30) && a) || (b + 2) * -10
-        @name
+        [name]
         这是一句话，哈哈~！
-        @name flagB
+        [name flagB]
         Some words!
         #end
       `)).to.eql([

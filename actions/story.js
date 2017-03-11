@@ -16,6 +16,7 @@
 
 module.exports = {
   StoryLine_formatA(head, command, content, foot) {
+    console.warn('[Deprecated] Command beginning with `@` will no longer be supported.')
     var content = content.parse();
     return {
       type: 'content',
@@ -34,6 +35,7 @@ module.exports = {
     }
   },
   StoryLine_formatC(head, command, foot) {
+    console.warn('[Deprecated] Command beginning with `@` will no longer be supported.')
     return {
       type: 'content',
       command: command.parse(),

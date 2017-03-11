@@ -34,9 +34,9 @@ BKS {
   comment_multi = (~("*/") any)+
 
   StoryLine
-    = "@" command content ("\\r"|"\\n")?  -- formatA
-      | "[" command content "]"    -- formatB
-      | "@" command ("\\r"|"\\n")?  -- formatC
+    = "[" command content "]"    -- formatB
+      | "@" command content ("\\r"|"\\n"|end)  -- formatA
+      | "@" command ("\\r"|"\\n"|end)  -- formatC
       | "[" command "]"    -- formatD
       | text -- formatE
 
