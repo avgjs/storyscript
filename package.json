@@ -1,6 +1,6 @@
 {
   "name": "avg-storyscript",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Build-in Story Script System for AVG.js.",
   "main": "dist/index.js",
   "scripts": {
